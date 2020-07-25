@@ -10,5 +10,5 @@ A patient will have unique Patient ID. Full description about the patient includ
 
 ## EDR
 ```
-![EDR](https://github.com/[fabioveiga]/[BDScriptHospital]/blob/[master]/ERD-v1.png.jpg?raw=true)
+![EDR](https://github.com/fabioveiga/BDScriptHospital/blob/master/ERD-v1.png.jpg?raw=true)
 ```
