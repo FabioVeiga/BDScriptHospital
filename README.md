@@ -19,7 +19,7 @@ A patient will have unique Patient ID. Full description about the patient includ
 
 
 ## EDR
-[Version 00](https://github.com/fabioveiga/BDScriptHospital/blob/master/ERD-v0.png?raw=true) |
+[Version 00](https://github.com/FabioVeiga/BDScriptHospital/blob/master/ERD-V0.png?raw=true) |
 [Version 01](https://github.com/fabioveiga/BDScriptHospital/blob/master/ERD-v1.png?raw=true)
 
 Current (Version 02)
