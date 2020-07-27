@@ -176,7 +176,7 @@ CREATE TABLE Patient.Treatment(
     Prescription VARCHAR(MAX) NOT NULL,
     DoctorID INT,
     PatientID INT,
-    RoomID INT
+    RoomHistoryID INT
 )
 
 ALTER TABLE Patient.Treatment
@@ -192,6 +192,75 @@ ADD CONSTRAINT FK2PatientID
 GO
 
 SELECT * FROM Patient.Treatment
+
+/*
+    END
+*/
+
+
+/*
+    BEGIN
+    Create Facilities Schema
+    Create Tables
+    Create Constraints
+*/
+
+DROP SCHEMA IF EXISTS Facilities
+GO
+
+CREATE SCHEMA Facilities
+GO
+
+DROP TABLE IF EXISTS Facilities.TypeRoom
+GO
+
+CREATE TABLE Facilities.TypeRoom(
+    TypeRoomID INT IDENTITY(1,1) CONSTRAINT PKTypeRoom PRIMARY KEY,
+    [Name] VARCHAR(100) NOT NULL,
+    AmountDaily DECIMAL(10,2) NOT NULL
+)
+
+SELECT * FROM Facilities.TypeRoom
+
+DROP TABLE IF EXISTS Facilities.Room
+GO
+
+CREATE TABLE Facilities.Room(
+    RoomID INT IDENTITY(1,1) CONSTRAINT PKRoomID PRIMARY KEY,
+    NumberRoom INT NOT NULL UNIQUE,
+    IsOcuppied Char(1) NOT NULL DEFAULT 'N',
+    TypeRoomID INT
+)
+
+ALTER TABLE Facilities.Room
+ADD CONSTRAINT FK1TypeRoomID
+    FOREIGN KEY (TypeRoomID)
+    REFERENCES Facilities.TypeRoom(TypeRoomID)
+GO
+
+DROP TABLE IF EXISTS Facilities.RoomHistory
+GO
+
+CREATE TABLE Facilities.RoomHistory(
+    RoomHistoryID INT IDENTITY(1,1) CONSTRAINT RoomHistoryID PRIMARY KEY,
+    StartDate DATE NOT NULL,
+    EndDate DATE NULL,
+    RoomID INT
+)
+
+ALTER TABLE Facilities.RoomHistory
+ADD CONSTRAINT FK1RoomID
+    FOREIGN KEY (RoomID)
+    REFERENCES Facilities.Room(RoomID)
+GO
+
+--Add constraint into the table Patient.Treatment
+ALTER TABLE Patient.Treatment
+ADD CONSTRAINT FK3RoomHistoryID
+    FOREIGN KEY (RoomHistoryID)
+    REFERENCES Facilities.RoomHistory(RoomHistoryID)
+GO
+
 
 /*
     END
