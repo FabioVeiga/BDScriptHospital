@@ -27,10 +27,10 @@ GO
 
 CREATE TABLE Doctor.General(
     DoctorID INT IDENTITY(1,1) CONSTRAINT PK_DoctorID PRIMARY KEY,
-    FisrtName VARCHAR(100) NOT NULL,
+    FirstName VARCHAR(100) NOT NULL,
     MiddleName VARCHAR(100) NULL,
     LastName VARCHAR(100) NOT NULL,
-    LicenseNumber INT NOT NULL,
+    LicenseNumber VARCHAR(20) NOT NULL,
     TypeLicense VARCHAR(50) NOT NULL,
     PhoneNumber1 VARCHAR(11) NOT NULL,
     PhoneNumber2 VARCHAR(11) NULL,
@@ -59,7 +59,7 @@ CREATE TABLE Doctor.DoctorSpecialization(
 SELECT * FROM Doctor.Specialization
 
 ALTER TABLE Doctor.DoctorSpecialization
-ADD CONSTRAINT FK1_SpecializationID_Specialization
+ADD CONSTRAINT FK1_SpecializationID_Specialization_DoctorSpecialization
     FOREIGN KEY (SpecializationID)
     REFERENCES Doctor.Specialization (SpecializationID)
 GO
@@ -111,9 +111,9 @@ GO
 CREATE TABLE Patient.Address(
     AddressID INT IDENTITY(1,1) CONSTRAINT PK_AddressID PRIMARY KEY,
     Line1 VARCHAR(MAX) NOT NULL,
+    [Number] INT NOT NULL,
     Line2 VARCHAR(MAX) NULL,
     City VARCHAR(50) NOT NULL,
-    [State] VARCHAR(100) NOT NULL,
     Province VARCHAR(100) NOT NULL,
     ZipCode VARCHAR(15) NOT NULL,
     PatientID INT
