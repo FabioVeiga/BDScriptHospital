@@ -4618,6 +4618,10 @@ INSERT INTO Facilities.RoomHistory (StartDate,EndDate,RoomID) VALUES ('2019/06/2
 INSERT INTO Patient.Diagnosis (Symptoms, HealedDate, DoctorID, PatientID, DiseasesID) VALUES ('XXXXX', NULL, 10, 9, 11);
 INSERT INTO Patient.Treatment (Prescription, DoctorID, PatientID, RoomHistoryID) VALUES ('YYYYY', 10, 9, 11)
 
+INSERT INTO Facilities.RoomHistory (StartDate,EndDate,RoomID) VALUES ('2020/05/02','2020/05/02', 1)
+INSERT INTO Patient.Diagnosis (Symptoms, HealedDate, DoctorID, PatientID, DiseasesID) VALUES ('XXXXX', '2020/05/02',1,10,1);
+INSERT INTO Patient.Treatment (Prescription, DoctorID, PatientID, RoomHistoryID) VALUES ('YYYYY',1,10,1)
+
 SELECT * FROM Facilities.RoomHistory
 SELECT * FROM Patient.Diagnosis
 SELECT * FROM Patient.Treatment
