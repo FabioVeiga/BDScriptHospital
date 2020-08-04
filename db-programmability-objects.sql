@@ -89,23 +89,41 @@ CREATE PROCEDURE Patient.InsertNewPatient
     @Province VARCHAR(100),
     @ZipCode VARCHAR(15)
 AS
-    INSERT INTO Patient.General
-    (
-     [FirstName], [MiddleName], [LastName], [DateOfBirth], [Gender], [Weight], [Height], [PhoneNumber]
-    )
-    VALUES
-    (
-     @FisrtName, @MiddleName, @LastName, @DateOfBith, @Gender, @Weight, @Height, @PhoneNumber
-    )
-    INSERT INTO Patient.Address
-    (
-     [Line1], [Number], [Line2], [City], [Province], [ZipCode], [PatientID]
-    )
-    VALUES
-    (
-     @Line1, @Number, @Line2, @City, @Province, @ZipCode, @@IDENTITY
-    )
+BEGIN
+    BEGIN TRY
+        INSERT INTO Patient.General
+        (
+        [FirstName], [MiddleName], [LastName], [DateOfBirth], [Gender], [Weight], [Height], [PhoneNumber]
+        )
+        VALUES
+        (
+        @FisrtName, @MiddleName, @LastName, @DateOfBith, @Gender, @Weight, @Height, @PhoneNumber
+        )
+        INSERT INTO Patient.Address
+        (
+        [Line1], [Number], [Line2], [City], [Province], [ZipCode], [PatientID]
+        )
+        VALUES
+        (
+        @Line1, @Number, @Line2, @City, @Province, @ZipCode, @@IDENTITY
+        )
 
+        SELECT * FROM Patient.General as ge
+        JOIN Patient.Address as ad
+            ON ad.PatientID = ge.PatientID
+        WHERE ad.PatientID = @@IDENTITY
+
+    END TRY
+    BEGIN CATCH
+        SELECT
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END
 GO
 
 EXEC Patient.InsertNewPatient 'Test', NULL, 'Test', '2000-01-01', 'F', 58.0, 1.56, NULL, 'test', 14, null, 'Quebec', 'Quebec', 'PPPPPPPP'
@@ -213,3 +231,95 @@ SELECT * FROM Patient.General as ge
 JOIN Patient.Address as ad
     ON ad.PatientID = ge.PatientID
 WHERE ad.PatientID = @@IDENTITY
+
+DROP PROCEDURE IF EXISTS Doctor.InsertDoctor
+GO
+CREATE PROCEDURE Doctor.InsertDoctor
+(
+    @FisrtName VARCHAR(100),
+    @MiddleName VARCHAR(100) = NULL,
+    @LastName VARCHAR(100),
+    @LicenseNumber VARCHAR(20),
+    @TypeLicense VARCHAR(50),
+    @PhoneNumber1 VARCHAR(11),
+    @PhoneNumber2 VARCHAR(11),
+    @Signature IMAGE
+)
+AS
+BEGIN
+    BEGIN TRY
+        INSERT INTO Doctor.General (FirstName, MiddleName, LastName, LicenseNumber, TypeLicense, PhoneNumber1, PhoneNumber2, [Signature])
+        VALUES (@FisrtName, @MiddleName, @LastName, @LicenseNumber, @TypeLicense, @PhoneNumber1, @PhoneNumber2, @Signature)
+        SELECT * FROM Doctor.General WHERE DoctorID = @@IDENTITY
+    END TRY
+    BEGIN CATCH
+        SELECT
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END
+
+EXECUTE Doctor.InsertDoctor 'John', NULL, 'Smith', '3231', 'Test', NULL, NULL, NULL
+EXECUTE Doctor.InsertDoctor 'John', NULL, 'Smith', '3231', 'Test', '11111111', NULL, NULL
+
+SELECT * FROM Doctor.General WHERE DoctorID = 1001
+
+DROP PROCEDURE IF EXISTS Doctor.UpdateDoctor
+GO
+CREATE PROCEDURE Doctor.UpdateDoctor
+(
+    @DoctorID INT,
+    @FisrtName VARCHAR(100),
+    @MiddleName VARCHAR(100) = NULL,
+    @LastName VARCHAR(100),
+    @LicenseNumber VARCHAR(20),
+    @TypeLicense VARCHAR(50),
+    @PhoneNumber1 VARCHAR(11),
+    @PhoneNumber2 VARCHAR(11),
+    @Signature IMAGE
+)
+AS
+BEGIN
+    DECLARE @msgOutPut VARCHAR(MAX)
+    IF @DoctorID IS NULL
+        SET @msgOutPut = 'Parameter DoctorID cannot be NULL!'
+    ELSE 
+    BEGIN
+        IF (SELECT count(*) FROM Doctor.General WHERE DoctorID = @DoctorID) = 0
+        BEGIN
+            SET @msgOutPut = CONCAT('DoctorID: ', @DoctorID,' does not exist!')
+        END
+        ELSE
+        BEGIN TRY
+            UPDATE Doctor.General SET
+            FirstName = @FisrtName, MiddleName = @MiddleName, LastName = @LastName,
+            LicenseNumber = @LicenseNumber, TypeLicense = @TypeLicense,
+            PhoneNumber1 = @PhoneNumber1, PhoneNumber2 = @PhoneNumber2, [Signature] = @Signature
+            WHERE
+            DoctorID = @DoctorID
+            
+            SET @msgOutPut = CONCAT('Doctor ',@DoctorID, ' has been updated!')
+        END TRY
+        BEGIN CATCH
+            SELECT
+                ERROR_NUMBER() AS ErrorNumber  
+                ,ERROR_SEVERITY() AS ErrorSeverity  
+                ,ERROR_STATE() AS ErrorState  
+                ,ERROR_PROCEDURE() AS ErrorProcedure  
+                ,ERROR_LINE() AS ErrorLine  
+                ,ERROR_MESSAGE() AS ErrorMessage;  
+        END CATCH
+    END
+    SELECT @msgOutPut as OutputMsg
+END
+GO
+
+EXECUTE Doctor.UpdateDoctor null, 'John Updated', NULL, 'Smith', '3231', 'Test', NULL, NULL, NULL
+EXECUTE Doctor.UpdateDoctor 1001, 'John Updated', NULL, 'Smith', '3231', 'Test', NULL, NULL, NULL
+EXECUTE Doctor.UpdateDoctor 1004, 'John Updated', NULL, 'Smith', '3231', 'Test', '11111111', NULL, NULL
+
+SELECT * FROM Doctor.General WHERE DoctorID = 1004
