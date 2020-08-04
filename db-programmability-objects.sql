@@ -323,3 +323,80 @@ EXECUTE Doctor.UpdateDoctor 1001, 'John Updated', NULL, 'Smith', '3231', 'Test',
 EXECUTE Doctor.UpdateDoctor 1004, 'John Updated', NULL, 'Smith', '3231', 'Test', '11111111', NULL, NULL
 
 SELECT * FROM Doctor.General WHERE DoctorID = 1004
+
+DROP PROCEDURE IF EXISTS Doctor.DeleteDoctor
+GO
+CREATE PROCEDURE Doctor.DeleteDoctor
+(
+    @DoctorID INT
+)
+AS
+BEGIN
+    DECLARE @msgOutPut VARCHAR(MAX)
+
+    IF @DoctorID IS NULL
+        SET @msgOutPut = 'Parameter DoctorID cannot be NULL!'
+    ELSE
+    BEGIN
+        IF (SELECT count(*) FROM Doctor.General WHERE DoctorID = @DoctorID) = 0
+        BEGIN
+            SET @msgOutPut = CONCAT('DoctorID: ', @DoctorID,' does not exist!')
+        END
+        ELSE
+        BEGIN
+            DELETE FROM Doctor.General WHERE DoctorID = @DoctorID
+            SET @msgOutPut = CONCAT('DoctorID: ',@DoctorID,' has been deleted!')
+        END
+    END
+    SELECT @msgOutPut as OutputMsg
+END
+
+EXECUTE Doctor.DeleteDoctor NULL
+EXECUTE Doctor.DeleteDoctor 1001
+EXECUTE Doctor.DeleteDoctor 1004
+
+
+-- Mandatory Functions
+DROP FUNCTION IF EXISTS FormatMonetary
+GO
+CREATE FUNCTION FormatMonetary
+(
+    @Value DECIMAL(10,2),
+    @Language VARCHAR(2)
+)
+RETURNS VARCHAR(MAX) AS
+BEGIN
+    RETURN
+        CASE
+            WHEN LOWER(@Language) = 'fr' THEN CONCAT(@Value,' $')
+            WHEN LOWER(@Language) = 'en' THEN CONCAT('$ ' ,@Value)
+            ELSE CONCAT(@Language, ' does not exist!')
+        END
+END
+GO
+
+SELECT dbo.FormatMonetary(12.42, 'en')
+UNION
+SELECT dbo.FormatMonetary(12.42, 'fr')
+UNION
+SELECT dbo.FormatMonetary(12.42, 'pt')
+
+
+DROP FUNCTION IF EXISTS func_getTime
+GO
+CREATE FUNCTION func_getTime
+(
+    @Time TIME,
+    @input INT
+)
+RETURNS VARCHAR(100) AS
+BEGIN
+    RETURN
+        CONVERT(varchar, DATEADD(HOUR, @input, @Time), 100)
+END
+GO
+
+SELECT dbo.func_getTime('9:00pm', -3)
+UNION ALL
+SELECT dbo.func_getTime('9:00pm',3)
+
