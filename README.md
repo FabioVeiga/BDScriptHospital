@@ -17,6 +17,10 @@ A patient will have unique Patient ID. Full description about the patient includ
 * *Assumptions*:
   * '*treatment bill*' - This term was unclear because based on the description the client specified only how many days the patient has stayed there but what more we need to charge. So I have talked with the client (which was the teacher) and we have decided each disease has a different price to be treated.
 
+## Mandatories
+* Include two functions
+  * Returns a formatted monetary amount depending on the language specified
+  * Return the local server time, plus/minus hour
 
 ## EDR
 [Version 00](https://github.com/FabioVeiga/BDScriptHospital/blob/master/ERD-V0.png?raw=true) |
