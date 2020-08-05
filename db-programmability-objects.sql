@@ -355,6 +355,90 @@ EXECUTE Doctor.DeleteDoctor NULL
 EXECUTE Doctor.DeleteDoctor 1001
 EXECUTE Doctor.DeleteDoctor 1004
 
+DROP PROCEDURE IF EXISTS Doctor.InsertSpecialization
+GO
+CREATE PROCEDURE Doctor.InsertSpecialization
+(
+    @Name VARCHAR(100)
+)AS
+BEGIN
+    BEGIN TRY
+        INSERT INTO Doctor.Specialization ([Name]) VALUES (@Name)
+        SELECT * FROM Doctor.Specialization WHERE SpecializationID = @@IDENTITY
+    END TRY
+    BEGIN CATCH
+        SELECT
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage; 
+    END CATCH
+END
+GO
+
+EXECUTE Doctor.InsertSpecialization NUll
+EXECUTE Doctor.InsertSpecialization 'Test'
+
+DROP PROCEDURE IF EXISTS Doctor.UpdateDoctor
+GO
+CREATE PROCEDURE Doctor.UpdateDoctor
+(
+    @SpecializationID INT,
+    @Name VARCHAR(100)
+) AS
+BEGIN
+    BEGIN TRY
+        UPDATE Doctor.Specialization SET
+        [Name] = @Name
+        WHERE SpecializationID = @SpecializationID
+    END TRY
+    BEGIN CATCH
+        SELECT
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage; 
+    END CATCH
+END
+GO
+
+EXECUTE Doctor.UpdateDoctor NULL, 'TEST Updated'
+EXECUTE Doctor.UpdateDoctor 28, NULL
+EXECUTE Doctor.UpdateDoctor 28, 'TEST Updated'
+
+INSERT INTO Doctor.DoctorSpecialization VALUES (28, 1)
+SELECT * FROM Doctor.DoctorSpecialization WHERE DoctorID = 1
+
+DROP PROCEDURE IF EXISTS Doctor.DeleteSpecialization
+GO
+CREATE PROCEDURE Doctor.DeleteSpecialization
+(
+    @SpecializationID INT
+) AS
+BEGIN
+    BEGIN TRY
+        DELETE FROM Doctor.DoctorSpecialization WHERE SpecializationID = @SpecializationID
+        DELETE FROM Doctor.Specialization  WHERE SpecializationID = @SpecializationID
+    END TRY
+    BEGIN CATCH
+        SELECT
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage; 
+    END CATCH
+END
+GO
+
+EXEC Doctor.DeleteSpecialization NULL
+EXEC Doctor.DeleteSpecialization 28
+
 
 -- Mandatory Functions
 DROP FUNCTION IF EXISTS FormatMonetary
